@@ -49,19 +49,19 @@ class PagesController extends Controller
 		return Redirect::to('/onlineFeedback')->withErrors($validator)->withInput();
 		}
 		$event=Event::find($request->event_name);
-		$online_feedbacks=new online_feedbacks;
-		$online_feedbacks->event_heard_from = $request->event_heard_from;
-        $online_feedbacks->userfriendly  = $request->one;
-        $online_feedbacks->design = $request->two;
-        $online_feedbacks->diversity = $request->three;
-        $online_feedbacks->helpavailability = $request->four;
-        $online_feedbacks->innovation = $request->five;
-        $online_feedbacks->recommend = $request->recommend;
-        $online_feedbacks->overall = $request->overall;
-        $online_feedbacks->yes_no = $request->yes_no;
-        $online_feedbacks->suggestions =$request->suggestions;
-        $online_feedbacks->event()->associate($event);
-        $online_feedbacks->save();
+		$feedback=new onlineFeedback;
+		$feedback->event_heard_from = $request->event_heard_from;
+        $feedback->userfriendly  = $request->one;
+        $feedback->design = $request->two;
+        $feedback->diversity = $request->three;
+        $feedback->helpavailability = $request->four;
+        $feedback->innovation = $request->five;
+        $feedback->recommend = $request->recommend;
+        $feedback->overall = $request->overall;
+        $feedback->yes_no = $request->yes_no;
+        $feedback->suggestions =$request->suggestions;
+        $feedback->event()->associate($event);
+        $feedback->save();
 
 
 		/* If you want to use mailing technology simply uncomment the below section*/
@@ -115,20 +115,20 @@ class PagesController extends Controller
 		return Redirect::to('/offlineFeedback')->withErrors($validator)->withInput();
 		}
 		$event=Event::find($request->event_name);
-		$offline_feedbacks=new offline_feedbacks;
-		$offline_feedbacks->event_heard_from = $request->event_heard_from;
-        $offline_feedbacks->content  = $request->one;
-        $offline_feedbacks->presentation = $request->two;
-        $offline_feedbacks->speaker = $request->three;
-		$offline_feedbacks->support_staff = $request->four;
-		$offline_feedbacks->organization = $request ->five;
-        $offline_feedbacks->location = $request->six;
-        $offline_feedbacks->recommend = $request->recommend;
-        $offline_feedbacks->overall = $request->overall;
-        $offline_feedbacks->yes_no = $request->yes_no;
-        $offline_feedbacks->suggestions =$request->suggestions;
-        $offline_feedbacks->event()->associate($event);
-        $offline_feedbacks->save();
+		$feedback=new offlineFeedback;
+		$feedback->event_heard_from = $request->event_heard_from;
+        $feedback->content  = $request->one;
+        $feedback->presentation = $request->two;
+        $feedback->speaker = $request->three;
+		$feedback->support_staff = $request->four;
+		$feedback->organization = $request ->five;
+        $feedback->location = $request->six;
+        $feedback->recommend = $request->recommend;
+        $feedback->overall = $request->overall;
+        $feedback->yes_no = $request->yes_no;
+        $feedback->suggestions =$request->suggestions;
+        $feedback->event()->associate($event);
+        $feedback->save();
 
 
 		/* If you want to use mailing technology simply uncomment the below section*/

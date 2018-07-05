@@ -25,7 +25,7 @@
 							<hr>
 						@endif
 					@endforeach
-				</ol>
+				</ol> 
 			</div>
 		</div>
 	</div>

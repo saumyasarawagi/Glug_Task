@@ -137,9 +137,9 @@ class EventController extends Controller
 
          foreach($events as $event) {
                 if($event->onoff=="online")
-                $overall->addRow([$event->name, online_feedbacks::where('event_id',$event->id)->avg('overall')]);
+                $overall->addRow([$event->name, onlineFeedback::where('event_id',$event->id)->avg('overall')]);
                else 
-                $overall->addRow([$event->name, offline_feedbacks::where('event_id',$event->id)->avg('overall')]);
+                $overall->addRow([$event->name, offlineFeedback::where('event_id',$event->id)->avg('overall')]);
 
             }
         
@@ -155,16 +155,16 @@ class EventController extends Controller
     public function getOnlineFeedbackResult($id)
     {
         $event=Event::where('id','=',$id)->first();
-        $total_feedback=online_feedbacks::where('event_id','=',$id)->count();
+        $total_feedback=onlineFeedback::where('event_id','=',$id)->count();
         /* Event heard from */
         $publicity = Lava::DataTable();
         $publicity->addStringColumn('reasons')
                  ->addNumberColumn('Percent')
-                 ->addRow(['Posters', online_feedbacks::where([['event_heard_from','poster'],['event_id',$id]])->count()])
-                 ->addRow(['Class Orientation', online_feedbacks::where([['event_heard_from','class_orientation'],['event_id',$id]])->count()])
-                 ->addRow(['Friends', online_feedbacks::where([['event_heard_from','friends'],['event_id',$id]])->count()])
-                 ->addRow(['Seniors', online_feedbacks::where([['event_heard_from','seniors'],['event_id',$id]])->count()])
-                 ->addRow(['Others', online_feedbacks::where([['event_heard_from','others'],['event_id',$id]])->count()]);
+                 ->addRow(['Posters', onlineFeedback::where([['event_heard_from','poster'],['event_id',$id]])->count()])
+                 ->addRow(['Class Orientation', onlineFeedback::where([['event_heard_from','class_orientation'],['event_id',$id]])->count()])
+                 ->addRow(['Friends', onlineFeedback::where([['event_heard_from','friends'],['event_id',$id]])->count()])
+                 ->addRow(['Seniors', onlineFeedback::where([['event_heard_from','seniors'],['event_id',$id]])->count()])
+                 ->addRow(['Others', onlineFeedback::where([['event_heard_from','others'],['event_id',$id]])->count()]);
         Lava::PieChart('event_heard', $publicity, [
             'title'  => 'Publicity of Event',
             'is3D'   => true
@@ -174,18 +174,18 @@ class EventController extends Controller
         $rates  = Lava::DataTable();
         $rates->addStringColumn('Subject')
                 ->addNumberColumn('Rates')
-                ->addRow(['User FRiendly',online_feedbacks::where('event_id',$id)->avg('userfriendly')])
-                ->addRow(['Design', online_feedbacks::where('event_id',$id)->avg('design')])
-                ->addRow(['Diversity',  online_feedbacks::where('event_id',$id)->avg('diversity')])
-                ->addRow(['Help Availability', online_feedbacks::where('event_id',$id)->avg('helpavailability')])
-                ->addRow(['Innovation',   online_feedbacks::where('event_id',$id)->avg('innovation')]);
+                ->addRow(['User FRiendly',onlineFeedback::where('event_id',$id)->avg('userfriendly')])
+                ->addRow(['Design', onlineFeedback::where('event_id',$id)->avg('design')])
+                ->addRow(['Diversity',  onlineFeedback::where('event_id',$id)->avg('diversity')])
+                ->addRow(['Help Availability', onlineFeedback::where('event_id',$id)->avg('helpavailability')])
+                ->addRow(['Innovation',   onlineFeedback::where('event_id',$id)->avg('innovation')]);
         Lava::BarChart('Rates', $rates, [ 'title' => 'Part rating of event']);
 
        /* recommend to your friends */
        $recommend  = Lava::DataTable();
        $recommend->addStringColumn('Subject')
                ->addNumberColumn('How likely, would you recommend the event to your friends ?')
-               ->addRow(['Recommend',online_feedbacks::where('event_id',$id)->avg('recommend')]);
+               ->addRow(['Recommend',onlineFeedback::where('event_id',$id)->avg('recommend')]);
        Lava::BarChart('Recommend', $recommend, ['title'=>'How likely, would you recommend the event to your friends  ?']);
 
         /* Want such Event to be conducted */
@@ -193,32 +193,32 @@ class EventController extends Controller
         $options->addStringColumn('Event')
         ->addNumberColumn('Yes')
         ->addNumberColumn('No')
-        ->addRow( [$event->name, ((online_feedbacks::where([['yes_no',1],['event_id',$id]])->count())/$total_feedback)*100, ((online_feedbacks::where([['yes_no',0],['event_id',$id]])->count())/$total_feedback)*100] );
+        ->addRow( [$event->name, ((onlineFeedback::where([['yes_no',1],['event_id',$id]])->count())/$total_feedback)*100, ((onlineFeedback::where([['yes_no',0],['event_id',$id]])->count())/$total_feedback)*100] );
         Lava::ColumnChart('Yes_No', $options, ['title' => 'Want such event to be conducted again (in %) ?']);
 
         /* Overall rating */
         $overall  = Lava::DataTable();
         $overall->addStringColumn('Subject')
                 ->addNumberColumn('Overall Rating')
-                ->addRow(['Overall',online_feedbacks::where('event_id',$id)->avg('overall')]);
+                ->addRow(['Overall',onlineFeedback::where('event_id',$id)->avg('overall')]);
         Lava::BarChart('Overall', $overall, ['title'=>'Overall Rating of the Event']);
         /*Suggestions */
-        $feedbacks=online_feedbacks::where('event_id',$id)->get();
-        return view('feedback_result')->withEvent($event)->withFeedbacks($feedbacks);
+        $feedbacks=onlineFeedback::where('event_id',$id)->get();
+        return view('feedback_result')->withEvent($event)->withonlineFeedbacks($feedbacks);
     }
     public function getOfflineFeedbackResult($id)
     {
         $event=Event::where('id','=',$id)->first();
-        $total_feedback=offline_feedbacks::where('event_id','=',$id)->count();
+        $total_feedback=offlineFeedback::where('event_id','=',$id)->count();
         /* Event heard from */
         $publicity = Lava::DataTable();
         $publicity->addStringColumn('reasons')
                  ->addNumberColumn('Percent')
-                 ->addRow(['Posters', offline_feedbacks::where([['event_heard_from','poster'],['event_id',$id]])->count()])
-                 ->addRow(['Class Orientation', offline_feedbacks::where([['event_heard_from','class_orientation'],['event_id',$id]])->count()])
-                 ->addRow(['Friends', offline_feedbacks::where([['event_heard_from','friends'],['event_id',$id]])->count()])
-                 ->addRow(['Seniors', offline_feedbacks::where([['event_heard_from','seniors'],['event_id',$id]])->count()])
-                 ->addRow(['Others', offline_feedbacks::where([['event_heard_from','others'],['event_id',$id]])->count()]);
+                 ->addRow(['Posters', offlineFeedback::where([['event_heard_from','poster'],['event_id',$id]])->count()])
+                 ->addRow(['Class Orientation', offlineFeedback::where([['event_heard_from','class_orientation'],['event_id',$id]])->count()])
+                 ->addRow(['Friends', offlineFeedback::where([['event_heard_from','friends'],['event_id',$id]])->count()])
+                 ->addRow(['Seniors', offlineFeedback::where([['event_heard_from','seniors'],['event_id',$id]])->count()])
+                 ->addRow(['Others', offlineFeedback::where([['event_heard_from','others'],['event_id',$id]])->count()]);
         Lava::PieChart('event_heard', $publicity, [
             'title'  => 'Publicity of Event',
             'is3D'   => true
@@ -228,19 +228,19 @@ class EventController extends Controller
         $rates  = Lava::DataTable();
         $rates->addStringColumn('Subject')
                 ->addNumberColumn('Rates')
-                ->addRow(['Content',offline_feedbacks::where('event_id',$id)->avg('content')])
-                ->addRow(['Presentation', offline_feedbacks::where('event_id',$id)->avg('presentation')])
-                ->addRow(['Speaker',  offline_feedbacks::where('event_id',$id)->avg('speaker')])
-                ->addRow(['Support Staff', offline_feedbacks::where('event_id',$id)->avg('support_staff')])
-                ->addRow(['Organisation',   offline_feedbacks::where('event_id',$id)->avg('organisation')])
-                ->addRow(['Location',   offline_feedbacks::where('event_id',$id)->avg('location')]);
+                ->addRow(['Content',offlineFeedback::where('event_id',$id)->avg('content')])
+                ->addRow(['Presentation', offlineFeedback::where('event_id',$id)->avg('presentation')])
+                ->addRow(['Speaker',  offlineFeedback::where('event_id',$id)->avg('speaker')])
+                ->addRow(['Support Staff', offlineFeedback::where('event_id',$id)->avg('support_staff')])
+                ->addRow(['Organisation',   offlineFeedback::where('event_id',$id)->avg('organisation')])
+                ->addRow(['Location',   offlineFeedback::where('event_id',$id)->avg('location')]);
         Lava::BarChart('Rates', $rates, [ 'title' => 'Part rating of event']);
 
         /* recommend to your friends */
         $recommend  = Lava::DataTable();
         $recommend->addStringColumn('Subject')
                 ->addNumberColumn('How likely, would you recommend the event to your friends ?')
-                ->addRow(['Recommend',offline_feedbacks::where('event_id',$id)->avg('recommend')]);
+                ->addRow(['Recommend',offlineFeedback::where('event_id',$id)->avg('recommend')]);
         Lava::BarChart('Recommend', $recommend, ['title'=>'How likely, would you recommend the event to your friends  ?']);
 
         /* Want such Event to be conducted */
@@ -248,18 +248,18 @@ class EventController extends Controller
         $options->addStringColumn('Event')
         ->addNumberColumn('Yes')
         ->addNumberColumn('No')
-        ->addRow( [$event->name, ((offline_feedbacks::where([['yes_no',1],['event_id',$id]])->count())/$total_feedback)*100, ((online_feedbacks::where([['yes_no',0],['event_id',$id]])->count())/$total_feedback)*100] );
+        ->addRow( [$event->name, ((offlineFeedback::where([['yes_no',1],['event_id',$id]])->count())/$total_feedback)*100, ((onlineFeedback::where([['yes_no',0],['event_id',$id]])->count())/$total_feedback)*100] );
         Lava::ColumnChart('Yes_No', $options, ['title' => 'Want such event to be conducted again (in %) ?']);
 
         /* Overall rating */
         $overall  = Lava::DataTable();
         $overall->addStringColumn('Subject')
                 ->addNumberColumn('Overall Rating')
-                ->addRow(['Overall',offline_feedbacks::where('event_id',$id)->avg('overall')]);
+                ->addRow(['Overall',offlineFeedback::where('event_id',$id)->avg('overall')]);
         Lava::BarChart('Overall', $overall, ['title'=>'Overall Rating of the Event']);
         /*Suggestions */
-        $feedbacks=offline_feedbacks::where('event_id',$id)->get();
-        return view('feedback_result')->withEvent($event)->withFeedbacks($feedbacks);
+        $feedbacks=offlineFeedback::where('event_id',$id)->get();
+        return view('feedback_result')->withEvent($event)->withofflineFeedbacks($feedbacks);
     }
 }
 
